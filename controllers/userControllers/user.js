@@ -49,6 +49,20 @@ exports.getAllUsers = (req, res, next) => {
     }
 }
 
+exports.getAllUsersByInstitute = (req, res, next) => {
+    try {
+        mycon.execute("SELECT `user`.idUser,`user`.email,`user`.mobileno,`user`.`status`,`user`.utypeId,`user`.instituteid,`user`.parent,`user`.gender,`user`.`name`,`user`.nic,section.section_name,position.position,`user`.fullName FROM `user` LEFT JOIN section ON section.idsection=`user`.section LEFT JOIN position ON position.idposition=`user`.position WHERE `user`.instituteid='" + req.body.iid + "'",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
 // userLogin
 exports.userLogin = (req, res, next) => {
     try {
@@ -102,7 +116,7 @@ exports.signUp = (req, res, next) => {
     console.log(req.body);
     try {
         var day = dateFormat(new Date(), "yyyy-mm-dd h:MM:ss");
-        var val = Math.floor(100000 + Math.random() * 900000); 
+        var val = Math.floor(100000 + Math.random() * 900000);
         var q = "SELECT `user`.idUser FROM `user` WHERE `user`.email='" + req.body.email + "'";
         mycon.execute(q, (e, r, f) => {
             if (!e) {

@@ -5,11 +5,15 @@ const userType = require('../controllers/userControllers/usetType');
 const privilage = require('../controllers/userControllers/privilege');
 const checkAuth = require('../middleware/check-auth');
 
+//post routes
+router.post("/signUp", user.signUp);
+router.post("/getAllUsersByInstitute", user.getAllUsersByInstitute);
+
 //user
 router.post("/getAllUsers", user.getAllUsers);
 router.post("/getUsersList", user.getUsersList);
 router.post("/update", user.update);
-router.post("/signUp", user.signUp);
+
 router.post("/userLogin", user.userLogin);
 router.post("/getUserKeys", user.getUserKeys);
 router.post("/saveNewUser", user.saveNewUser);

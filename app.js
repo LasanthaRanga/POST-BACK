@@ -13,6 +13,7 @@ const indexRouter = require('./routers/index');
 const usersRout = require('./routers/userRout');
 const instituteRout = require('./routers/institure');
 const sectionRout = require('./routers/section');
+const letterRout = require('./routers/letter');
 
 
 const allowedOrigins = [
@@ -48,6 +49,7 @@ app.use('/', indexRouter);
 app.use('/user', usersRout);
 app.use('/institute', instituteRout);
 app.use('/section', sectionRout);
+app.use('/letter', letterRout);
 
 
 

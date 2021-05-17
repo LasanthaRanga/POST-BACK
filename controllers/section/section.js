@@ -160,7 +160,7 @@ exports.updatePosition = (req, res, next) => {
 
 exports.createLtype = (req, res, next) => {
     try {
-        mycon.execute("INSERT INTO `latertype` (`type`,`instituteid`,`description`) VALUES ('" + this.realEscapeString(req.body.ltype) + "','" + req.body.iid + "','" + req.body.ltypeDes + "')",
+        mycon.execute("INSERT INTO `lettertype` (`type`,`instituteid`,`description`) VALUES ('" + this.realEscapeString(req.body.ltype) + "','" + req.body.iid + "','" + req.body.ltypeDes + "')",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -173,11 +173,14 @@ exports.createLtype = (req, res, next) => {
 }
 
 exports.getLtypeByInstitute = (req, res, next) => {
+    console.log(req.body);
     try {
-        mycon.execute("SELECT latertype.idLaterType,latertype.type,latertype.instituteid,latertype.description FROM latertype WHERE latertype.instituteid=" + req.body.iid,
+        mycon.execute("SELECT lettertype.idLetterType,lettertype.type,lettertype.instituteid,lettertype.description FROM lettertype WHERE lettertype.instituteid=" + req.body.iid,
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
+                } else {
+                    res.send(error);
                 }
             });
     } catch (error) {
@@ -189,7 +192,7 @@ exports.getLtypeByInstitute = (req, res, next) => {
 exports.createSubLtype = (req, res, next) => {
     console.log(req.body);
     try {
-        mycon.execute("INSERT INTO `latersubtype` (`subtype`,`description`,`instituteid`,`ltypeId`) VALUES ('" + this.realEscapeString(req.body.subType) + "','" + this.realEscapeString(req.body.subTypeDes) + "','" + req.body.iid + "','" + req.body.ltype + "')",
+        mycon.execute("INSERT INTO `lettersubtype` (`subtype`,`description`,`instituteid`,`ltypeId`) VALUES ('" + this.realEscapeString(req.body.subType) + "','" + this.realEscapeString(req.body.subTypeDes) + "','" + req.body.iid + "','" + req.body.ltype + "')",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -203,7 +206,7 @@ exports.createSubLtype = (req, res, next) => {
 
 exports.getSubLtypeByLtype = (req, res, next) => {
     try {
-        mycon.execute("SELECT latersubtype.idlaterSubType,latersubtype.subtype,latersubtype.description,latersubtype.ltypeId,latersubtype.instituteid FROM latersubtype WHERE latersubtype.ltypeId=" + req.body.ltype,
+        mycon.execute("SELECT lettersubtype.idLetterSubType,lettersubtype.subtype,lettersubtype.description,lettersubtype.ltypeId,lettersubtype.instituteid FROM lettersubtype WHERE lettersubtype.ltypeId=" + req.body.ltype,
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);

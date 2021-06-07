@@ -7,28 +7,32 @@ const { param } = require('../../routers');
 
 
 exports.realEscapeString = (str) => {
-    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
-        switch (char) {
-            case "\0":
-                return "\\0";
-            case "\x08":
-                return "\\b";
-            case "\x09":
-                return "\\t";
-            case "\x1a":
-                return "\\z";
-            case "\n":
-                return "\\n";
-            case "\r":
-                return "\\r";
-            case "\"":
-            case "'":
-            case "\\":
-            case "%":
-                return "\\" + char; // prepends a backslash to backslash, percent,
-            // and double/single quotes
-        }
-    });
+    if (str) {
+        return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
+            switch (char) {
+                case "\0":
+                    return "\\0";
+                case "\x08":
+                    return "\\b";
+                case "\x09":
+                    return "\\t";
+                case "\x1a":
+                    return "\\z";
+                case "\n":
+                    return "\\n";
+                case "\r":
+                    return "\\r";
+                case "\"":
+                case "'":
+                case "\\":
+                case "%":
+                    return "\\" + char; // prepends a backslash to backslash, percent,
+                // and double/single quotes
+            }
+        });
+    } else {
+        return '';
+    }
 }
 
 
@@ -141,12 +145,14 @@ exports.signUp = (req, res, next) => {
                             console.log(hash);
 
                             var qqq = "INSERT INTO  `user` (`email`,`pword`,`mobileno`,`authcode`,`status`,`dateTime`,`utypeId`,`instituteid`,`section`,`position`,`parent`,`gender`,`fullName`,`name`,`nic`)" +
-                                " VALUES ('" + this.realEscapeString(req.body.email) + "','" + hash + "','" + this.realEscapeString(req.body.mobileno) + "','" + val + "',1,'" + day + "',3,'" + req.body.instituteid + "','" + req.body.section + "','" + req.body.position
+                                " VALUES ('" + this.realEscapeString(req.body.email) + "','" + hash + "','" + this.realEscapeString(req.body.mobileno) + "','" + val + "',1,'" + day + "','" + req.body.utypeId + "','" + req.body.iid + "','" + req.body.section + "','" + req.body.position
                                 + "','" + req.body.parent + "','" + req.body.gender + "','" + this.realEscapeString(req.body.fullName) + "','" + this.realEscapeString(req.body.name) + "','" + this.realEscapeString(req.body.nic) + "')"
 
                             mycon.execute(qqq, (ee, rr, ff) => {
                                 if (!ee) {
-                                    res.send({ uid: rr.insertId, email: req.body.email });
+                                    res.send(rr);
+
+                                    // res.send({ uid: rr.insertId, email: req.body.email });
                                     // mg.emailSend({
                                     //     to: req.body.email,
                                     //     subject: 'Post Email Verification',

@@ -103,3 +103,74 @@ exports.getByUser = (req, res, next) => {
         res.status(500).send(error);
     }
 }
+
+
+exports.sendLatter = (req, res, next) => {
+
+    console.log(req.body);
+    var b = req.body;
+    var dd = {
+        to: {
+            idUser: 8,
+            email: 'asdf@asdf.com',
+            mobileno: '0702517628',
+            status: 1,
+            utypeId: 3,
+            instituteid: 14,
+            parent: 0,
+            gender: 'Male',
+            name: 'Mrs. asdf asdf asdf ',
+            nic: 'asdfasdf',
+            section_name: 'IT',
+            position: 'Software Engineer',
+            fullName: 'asdf asdf asdf ',
+            idsection: 4,
+            idposition: 4
+        },
+        from: {
+            uid: 6,
+            email: 'rm.lasantharanga@gmail.com',
+            mobile: '0702517628',
+            uType: 2,
+            iid: 14,
+            section: null,
+            position: null,
+            parent: null,
+            name: null,
+            nic: null,
+            iat: 1622176648,
+            exp: 1622180248
+        },
+        latter: { laterId: 69, status_int: 1, status_string: 'sent' }
+    }
+
+    var day = dateFormat(new Date(), "yyyy-mm-dd h:MM:ss");
+
+    try {
+        mycon.execute("INSERT INTO `fromto` ( `laterid`, `from_iid`, `from_uid`, `from_dip`, `from_posh`, `to_iid`, `to_uid`, `to_dip`, `to_posh`, `status_int`, `status_string`, `date_sent`, `date_status_change` ) " +
+            " VALUES(" + b.latter.laterId + ", " + b.from.iid + ", " + b.from.uid + ", " + b.from.section + ", " + b.from.position +
+            ", " + b.to.instituteid + ", " + b.to.idUser + ", " + b.to.idsection + ", " + b.to.idposition + ", " + b.latter.status_int + ", '" + b.latter.status_string + "', '" + day + "', NULL)",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.getInbox = (req, res, next) => {
+    try {
+        mycon.execute("SELECT fromto.idFromTo,fromto.laterid,fromto.from_iid,fromto.from_uid,fromto.from_dip,fromto.from_posh,fromto.to_iid,fromto.to_uid,fromto.to_dip,fromto.to_posh,fromto.status_int,fromto.status_string,fromto.date_sent,fromto.date_status_change,letter.idLetter,letter.title,`user`.idUser,`user`.`name`,section.section_name,position.position,position.idposition,section.idsection FROM fromto INNER JOIN letter ON letter.idLetter=fromto.laterid INNER JOIN `user` ON `user`.idUser=fromto.from_uid LEFT JOIN section ON section.idsection=`user`.section LEFT JOIN position ON position.idposition=`user`.position WHERE fromto.to_iid='" + req.body.iid + "' AND fromto.to_uid='" + req.body.uid + "' AND fromto.status_int=" + req.body.status,
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}

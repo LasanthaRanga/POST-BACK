@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const checkAuth = require('../middleware/check-auth');
 const mycon = require('../util/conn');
+var filePath = require('path');
 var fs = require('fs');
 var dateFormat = require('dateformat');
 let path = '';
@@ -32,21 +33,56 @@ router.post("/upload", upload.single('attach'), (req, res, next) => {
     console.log("call method");
     try {
         console.log(req.file.path + "  --> Path ");
+        const ftype = filePath.extname(req.file.path);
+        console.log(ftype + "  --> Type ");
         console.log(req.body);
         let pp = path;
 
-        // mycon.execute("", (error, rows, next) => {
-        //     if (!error) {
-        //         res.send({ imgpath: pp });
-        //     } else {
-        //         console.log(error);
-        //     }
-        // });
+        mycon.execute("INSERT INTO `attach` (`idInstitute`,`iduser`,`page_number`,`comment`,`status`,`type`,`path`,`latterID`) VALUES ('" + req.body.iid + "','" + req.body.uid + "','" + req.body.page + "','" + this.rES(req.body.comment) + "',1,'asdf','" + req.file.path + "','" + req.body.latterID + "')", (error, rows, next) => {
+            if (!error) {
+                res.send({ imgpath: pp });
+            } else {
+                console.log(error);
+            }
+        });
+
     } catch (error) {
         console.log("-----")
         console.log(error);
     }
 });
+
+
+
+exports.rES = (str) => {
+    if (str.length > 0) {
+        return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
+            switch (char) {
+                case "\0":
+                    return "\\0";
+                case "\x08":
+                    return "\\b";
+                case "\x09":
+                    return "\\t";
+                case "\x1a":
+                    return "\\z";
+                case "\n":
+                    return "\\n";
+                case "\r":
+                    return "\\r";
+                case "\"":
+                case "'":
+                case "\\":
+                case "%":
+                    return "\\" + char; // prepends a backslash to backslash, percent,
+                // and double/single quotes
+            }
+        })
+    } else {
+        return '';
+    }
+}
+
 
 router.get('/getUploadList/:id', (req, res, nex) => {
     console.log(req.params);

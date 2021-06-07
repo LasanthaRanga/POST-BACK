@@ -51,7 +51,7 @@ exports.getAllUsers = (req, res, next) => {
 
 exports.getAllUsersByInstitute = (req, res, next) => {
     try {
-        mycon.execute("SELECT `user`.idUser,`user`.email,`user`.mobileno,`user`.`status`,`user`.utypeId,`user`.instituteid,`user`.parent,`user`.gender,`user`.`name`,`user`.nic,section.section_name,position.position,`user`.fullName FROM `user` LEFT JOIN section ON section.idsection=`user`.section LEFT JOIN position ON position.idposition=`user`.position WHERE `user`.instituteid='" + req.body.iid + "'",
+        mycon.execute("SELECT `user`.idUser,`user`.email,`user`.mobileno,`user`.`status`,`user`.utypeId,`user`.instituteid,`user`.parent,`user`.gender,`user`.`name`,`user`.nic,section.section_name,position.position,`user`.fullName, section.idsection, position.idposition  FROM `user` LEFT JOIN section ON section.idsection=`user`.section LEFT JOIN position ON position.idposition=`user`.position WHERE `user`.instituteid='" + req.body.iid + "'",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -66,39 +66,48 @@ exports.getAllUsersByInstitute = (req, res, next) => {
 // userLogin
 exports.userLogin = (req, res, next) => {
     try {
-        var q = "SELECT `user`.idUser,`user`.email,`user`.pword,`user`.mobileno,`user`.authcode,`user`.`status`,`user`.dateTime,`user`.utypeId, `user`.instituteid FROM `user` WHERE `user`.email='" + req.body.email + "'";
+        var q = "SELECT `user`.idUser,`user`.email,`user`.pword,`user`.mobileno,`user`.authcode,`user`.`status`,`user`.dateTime,`user`.utypeId,`user`.instituteid,`user`.section,`user`.position,`user`.parent,`user`.gender,`user`.fullName,`user`.`name`,`user`.nic FROM `user` WHERE `user`.email='" + req.body.email + "'";
         mycon.execute(q,
             (e, r, f) => {
                 if (!e) {
                     var user = r[0];
                     console.log(user);
-                    bcript.compare(req.body.pword, user.pword, (err, result) => {
-                        if (err) {
-                            console.log(err);
-                            return res.status(401).json({ message: 'user name or password is wrong' });
-                        } else {
-                            if (result) {
-                                const token = jwt.sign({
-                                    uid: user.idUser,
-                                    email: user.email,
-                                    mobile: user.mobileno,
-                                    uType: user.utypeId,
-                                    iid: user.instituteid
-                                },
-                                    process.env.JWT_KEY,
-                                    {
-                                        expiresIn: "1h"
-                                    },
-                                );
-                                return res.status(200).json({
-                                    mg: "Auth Successfull",
-                                    token: token
-                                });
-                            } else {
+                    if (user) {
+                        bcript.compare(req.body.pword, user.pword, (err, result) => {
+                            if (err) {
+                                console.log(err);
                                 return res.status(401).json({ message: 'user name or password is wrong' });
+                            } else {
+                                if (result) {
+                                    const token = jwt.sign({
+                                        uid: user.idUser,
+                                        email: user.email,
+                                        mobile: user.mobileno,
+                                        uType: user.utypeId,
+                                        iid: user.instituteid,
+                                        section: user.section,
+                                        position: user.position,
+                                        parent: user.parent,
+                                        name: user.name,
+                                        nic: user.nic
+                                    },
+                                        process.env.JWT_KEY,
+                                        {
+                                            expiresIn: "1h"
+                                        },
+                                    );
+                                    return res.status(200).json({
+                                        mg: "Auth Successfull",
+                                        token: token
+                                    });
+                                } else {
+                                    return res.status(401).json({ message: 'user name or password is wrong' });
+                                }
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        return res.status(401).json({ message: 'user name or password is wrong' });
+                    }
                 } else {
                     console.log(e);
                 }

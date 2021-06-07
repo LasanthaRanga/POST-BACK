@@ -8,13 +8,15 @@ const checkAuth = require('../middleware/check-auth');
 //post routes
 router.post("/signUp", user.signUp);
 router.post("/getAllUsersByInstitute", user.getAllUsersByInstitute);
+router.post("/userLogin", user.userLogin);
+
 
 //user
 router.post("/getAllUsers", user.getAllUsers);
 router.post("/getUsersList", user.getUsersList);
 router.post("/update", user.update);
 
-router.post("/userLogin", user.userLogin);
+
 router.post("/getUserKeys", user.getUserKeys);
 router.post("/saveNewUser", user.saveNewUser);
 router.post("/getAllUsers", user.getAllUsers);

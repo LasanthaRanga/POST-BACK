@@ -41,6 +41,8 @@ exports.getAllUsers = (req, res, next) => {
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
+                } else {
+                    res.send(error);
                 }
             });
     } catch (error) {

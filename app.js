@@ -25,6 +25,8 @@ const allowedOrigins = [
     'http://localhost:4200',
     'http://localhost:8080',
     'http://localhost:8100',
+    'https://post.cat2020.org',
+    'https://www.post.cat2020.org',
 ];
 
 const corsOptions = {

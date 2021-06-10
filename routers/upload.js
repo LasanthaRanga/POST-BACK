@@ -37,8 +37,9 @@ router.post("/upload", upload.single('attach'), (req, res, next) => {
         console.log(ftype + "  --> Type ");
         console.log(req.body);
         let pp = path;
+        console.log(path + '          ---------- path       ')
 
-        mycon.execute("INSERT INTO `attach` (`idInstitute`,`iduser`,`page_number`,`comment`,`status`,`type`,`path`,`latterID`) VALUES ('" + req.body.iid + "','" + req.body.uid + "','" + req.body.page + "','" + this.rES(req.body.comment) + "',1,'" + ftype + "','" + this.rES(req.file.path) + "','" + req.body.latterID + "')", (error, rows, next) => {
+        mycon.execute("INSERT INTO `attach` (`idInstitute`,`iduser`,`page_number`,`comment`,`status`,`type`,`path`,`latterID`) VALUES ('" + req.body.iid + "','" + req.body.uid + "','" + req.body.page + "','" + this.rES(req.body.comment) + "',1,'" + ftype + "','" + this.rES(path) + "','" + req.body.latterID + "')", (error, rows, next) => {
             if (!error) {
                 res.send({ imgpath: pp });
             } else {

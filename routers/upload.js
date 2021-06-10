@@ -9,8 +9,8 @@ let path = '';
 const multer = require('multer');
 var appRoot = require('app-root-path');
 
-const uppath = "./uploads";
-// const uppath = "../public_html/uploads";
+// const uppath = "./uploads/";
+const uppath = "../ANGULAR/uploads";
 // const downpath = "https://www.coopshop.lk/uploads/profile/";
 
 const storage = multer.diskStorage({
@@ -38,7 +38,7 @@ router.post("/upload", upload.single('attach'), (req, res, next) => {
         console.log(req.body);
         let pp = path;
 
-        mycon.execute("INSERT INTO `attach` (`idInstitute`,`iduser`,`page_number`,`comment`,`status`,`type`,`path`,`latterID`) VALUES ('" + req.body.iid + "','" + req.body.uid + "','" + req.body.page + "','" + this.rES(req.body.comment) + "',1,'" + ftype + "','" + req.file.path + "','" + req.body.latterID + "')", (error, rows, next) => {
+        mycon.execute("INSERT INTO `attach` (`idInstitute`,`iduser`,`page_number`,`comment`,`status`,`type`,`path`,`latterID`) VALUES ('" + req.body.iid + "','" + req.body.uid + "','" + req.body.page + "','" + this.rES(req.body.comment) + "',1,'" + ftype + "','" + this.rES(req.file.path) + "','" + req.body.latterID + "')", (error, rows, next) => {
             if (!error) {
                 res.send({ imgpath: pp });
             } else {

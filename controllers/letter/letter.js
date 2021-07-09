@@ -152,6 +152,7 @@ exports.sendLatter = (req, res, next) => {
             ", " + b.to.instituteid + ", " + b.to.idUser + ", " + b.to.idsection + ", " + b.to.idposition + ", " + b.latter.status_int + ", '" + b.latter.status_string + "', '" + day + "', NULL)",
             (error, rows, fildData) => {
                 if (!error) {
+                    mycon.execute("UPDATE `letter` SET `statusint`=" + b.latter.status_int + ",`statusstring`='" + b.latter.status_string + "' WHERE `idLetter`=" + b.latter.laterId, (e, r, f) => { })
                     res.send(rows);
                 } else {
                     console.log(error);
@@ -165,7 +166,7 @@ exports.sendLatter = (req, res, next) => {
 
 exports.getInbox = (req, res, next) => {
     try {
-        mycon.execute("SELECT fromto.idFromTo,fromto.laterid,fromto.from_iid,fromto.from_uid,fromto.from_dip,fromto.from_posh,fromto.to_iid,fromto.to_uid,fromto.to_dip,fromto.to_posh,fromto.status_int,fromto.status_string,fromto.date_sent,fromto.date_status_change,letter.idLetter,letter.title,`user`.idUser,`user`.`name`,section.section_name,position.position,position.idposition,section.idsection FROM fromto INNER JOIN letter ON letter.idLetter=fromto.laterid INNER JOIN `user` ON `user`.idUser=fromto.from_uid LEFT JOIN section ON section.idsection=`user`.section LEFT JOIN position ON position.idposition=`user`.position WHERE fromto.to_iid='" + req.body.iid + "' AND fromto.to_uid='" + req.body.uid + "' AND fromto.status_int=" + req.body.status,
+        mycon.execute("SELECT fromto.idFromTo,fromto.laterid,fromto.from_iid,fromto.from_uid,fromto.from_dip,fromto.from_posh,fromto.to_iid,fromto.to_uid,fromto.to_dip,fromto.to_posh,fromto.status_int,fromto.status_string,fromto.date_sent,fromto.date_status_change,letter.idLetter,letter.title,`user`.idUser,`user`.`name`,section.section_name,position.position,position.idposition,section.idsection FROM fromto INNER JOIN letter ON letter.idLetter=fromto.laterid INNER JOIN `user` ON `user`.idUser=fromto.from_uid LEFT JOIN section ON section.idsection=`user`.section LEFT JOIN position ON position.idposition=`user`.position WHERE fromto.to_iid='" + req.body.iid + "' AND fromto.to_uid='" + req.body.uid + "' AND fromto.status_int=" + req.body.status + " ORDER BY fromto.idFromTo DESC",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -229,6 +230,7 @@ exports.saveEdit = (req, res, next) => {
         mycon.execute("INSERT INTO `edit` (`userid`,`description`,`updated`,`status`,`latterid`) VALUES ('" + req.body.uid + "','" + this.rES(req.body.description) + "','" + day + "',1,'" + req.body.latterid + "')",
             (error, rows, fildData) => {
                 if (!error) {
+                    mycon.execute("UPDATE `letter` SET `statusint`=1,`statusstring`='pending' WHERE `idLetter`=" + req.body.latterid, (e, r, f) => { })
                     res.send(rows);
                 } else {
                     console.log(error)
@@ -253,4 +255,45 @@ exports.updateEdit = (req, res, next) => {
         console.log(error);
         res.status(500).send(error);
     }
+}
+
+exports.getEdit = (req, res, next) => {
+    try {
+        var day = dateFormat(new Date(), "yyyy-mm-dd h:MM:ss");
+        mycon.execute("SELECT edit.idEdit,edit.userid,edit.description,edit.updated,edit.`status`,edit.latterid,`user`.`name` FROM edit INNER JOIN `user` ON `user`.idUser=edit.userid WHERE edit.latterid=" + req.body.latterid,
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                } else {
+                    console.log(error)
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.complete = (req, res, next) => {
+    try {
+        var day = dateFormat(new Date(), "yyyy-mm-dd h:MM:ss");
+        console.log(req.body);
+        mycon.execute("SELECT fromto.idFromTo FROM fromto WHERE fromto.to_uid='" + req.body.uid + "' AND fromto.laterid='" + req.body.laterId + "' ORDER BY fromto.idFromTo DESC LIMIT 1",
+            (error, rows, fildData) => {
+                if (!error) {
+                    console.log(rows);
+                    let ftid = rows[0].idFromTo;
+
+                    mycon.execute("UPDATE `fromto` SET `status_int`=5,`status_string`='Complete',`date_status_change`='" + day + "' WHERE `idFromTo`=" + ftid, (e, r, f) => {
+                        if (!e) {
+                            res.send(r);
+                        }
+                    })
+
+                } else {
+                    console.log(error);
+                }
+            });
+    } catch (error) { }
+
 }

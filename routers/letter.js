@@ -15,6 +15,8 @@ router.post("/getAttachment", letter.getAttachment);
 router.post("/statusChange", letter.statusChange);
 router.post("/saveEdit", letter.saveEdit);
 router.post("/updateEdit", letter.updateEdit);
+router.post("/getEdit", letter.getEdit);
+router.post("/complete", letter.complete);
 
 
 module.exports = router;

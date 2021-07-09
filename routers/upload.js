@@ -100,6 +100,21 @@ router.get('/getUploadList/:id', (req, res, nex) => {
     }
 });
 
+router.get('/getItem/:id', (req, res, nex) => {
+    console.log(req.params);
+    try {
+        mycon.execute("SELECT attach.idAttach,attach.idInstitute,attach.iduser,attach.page_number,attach.`comment`,attach.`status`,attach.type,attach.path,attach.latterID FROM attach where idAttach = " + req.params.id, (error, rows, next) => {
+            if (!error) {
+                res.send(rows);
+            } else {
+                console.log(error);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+    }
+});
+
 
 router.get('/:path', (req, res, nex) => {
     //    console.log("hit");

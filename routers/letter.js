@@ -10,6 +10,7 @@ router.post("/getByInstitute", letter.getByInstitute);
 router.post("/getByUser", letter.getByUser);
 router.post("/sendLatter", letter.sendLatter);
 router.post("/getInbox", letter.getInbox);
+router.post("/search", letter.search);
 router.post("/getLatter", letter.getLatter);
 router.post("/getAttachment", letter.getAttachment);
 router.post("/statusChange", letter.statusChange);

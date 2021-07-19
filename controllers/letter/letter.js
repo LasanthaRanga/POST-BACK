@@ -178,6 +178,20 @@ exports.getInbox = (req, res, next) => {
     }
 }
 
+exports.search = (req, res, next) => {
+    try {
+        mycon.execute("SELECT fromto.idFromTo,fromto.laterid,fromto.from_iid,fromto.from_uid,fromto.from_dip,fromto.from_posh,fromto.to_iid,fromto.to_uid,fromto.to_dip,fromto.to_posh,fromto.status_int,fromto.status_string,fromto.date_sent,fromto.date_status_change,letter.idLetter,letter.title,`user`.idUser,`user`.`name`,section.section_name,position.position,position.idposition,section.idsection FROM fromto INNER JOIN letter ON letter.idLetter=fromto.laterid INNER JOIN `user` ON `user`.idUser=fromto.from_uid LEFT JOIN section ON section.idsection=`user`.section LEFT JOIN position ON position.idposition=`user`.position WHERE fromto.to_iid='" + req.body.iid + "' ORDER BY fromto.idFromTo DESC",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
 exports.getLatter = (req, res, next) => {
     try {
         mycon.execute("SELECT letter.idLetter,letter.instituteid,letter.ltype,letter.lstype,letter.title,letter.subtitle,letter.description,letter.barcode,letter.`from`,letter.from_email,letter.from_mobile,letter.created,letter.dedline,letter.`option`,letter.statusint,letter.statusstring FROM letter WHERE letter.idLetter=" + req.body.idLatter,
